@@ -15,7 +15,7 @@ $> ./build-and-run.sh
 ```
 
 ## Viewing/Administering the application
-1. Navigate to http://localhost:9000 in a web browser
+1. Navigate to [http://localhost:9000](http://localhost:9000) in a web browser
 2. On the left you will see three menu items:
     * Dashboard
         * Here you can view the list of available tasks that are scheduled which can be manually started and stopped.
