@@ -1,0 +1,188 @@
+@import models.Configuration
+@import ro.fortsoft.pf4j.PluginWrapper
+@import test.plugin.TestPluginExtension
+@import org.apache.commons.lang3.tuple.Pair
+@import models.util.ScheduleUtil
+
+@(configuration:Configuration, plugins:java.util.Map[PluginWrapper, java.util.List[Pair[String, String]]])
+
+@isExtensionEqual = @{ (config:Configuration, plugin:PluginWrapper, extension:String) =>
+    val configPluginName = config.processorPluginName
+    val configPluginVer = config.processorPluginVersion
+    val configPluginExt = config.processorPluginExtension
+    val pluginName = plugin.getPluginId
+    val pluginVer = plugin.getDescriptor.getVersion.toString
+
+    (configPluginName != null && pluginName != null && configPluginName.equals(pluginName)) &&
+        (configPluginVer != null && pluginVer != null && configPluginVer.equals(pluginVer)) &&
+        (configPluginExt != null && extension != null && configPluginExt.equals(extension))
+}
+
+@views.html.admin.index() {
+    <div id="edit-configuration">
+        @views.html.admin.configurations.modal.confirmCancel("pageCancel", "/admin/configurations")
+
+        <div id="page-wrapper" style="padding-bottom: 100px;">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Edit Configuration</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div id="message-container" class="col-lg-6" style="padding:0;">
+                    <div id="configuration-edit-success" class="hidden alert alert-success fade in" style="padding: 6px;margin-bottom:0.5em;"><span class="close" data-dismiss="alert">&times;</span><span class="messageText">Configuration has been updated successfully.</span></div>
+                    <div id="configuration-edit-error" class="hidden alert alert-danger fade in" style="padding: 6px;margin-bottom:0.5em;"><span class="close" data-dismiss="alert">&times;</span><span class="messageText">There was a problem while trying to update the configuration.</span></div>
+                </div>
+            </div>
+            <div class="row" style="margin-bottom: 10px;">
+                <button class="btn btn-primary save pull-right ladda-button" data-style="zoom-in" data-size="l" data-id="@configuration.id">
+                    <span class="ladda-label">Save</span>
+                </button>
+                <button class="btn btn-default cancel pull-right" style="margin-right: 10px;" data-toggle="modal" data-target="#confirm-cancel-pageCancel">Cancel</button>
+            </div>
+            <div class="row">
+                <div class="panel panel-primary" style="margin-bottom: 10px;">
+                    <div class="panel-heading">
+                        Configuration Information
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="enabled">Enabled?</label>
+                                    <select name="enabled" id="enabled" class="form-control" style="max-width: 400px;">
+                                        <option value="true" @if(configuration.enabled) {selected}>Yes</option>
+                                        <option value="false" @if(!configuration.enabled) {selected}>No</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name">Name</label>
+                                    <input type="text" class="form-control" id="name" placeholder="Configuration Name" style="max-width: 400px;" value="@configuration.name"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="panel panel-primary" style="margin-bottom: 10px;">
+                    <div class="panel-heading">
+                        Settings
+                    </div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="task-processor">Task Processor</label>
+                                    <select id="task-processor" class="form-control" style="max-width: 400px;">
+                                        <option value="">Select Processor</option>
+                                        @for(plugin <- plugins.keySet()) {
+                                            <optgroup label="@plugin.getPluginId (@plugin.getDescriptor.getVersion)">
+                                            @defining(plugins.get(plugin).filter(e => e.getRight.equals(classOf[TestPluginExtension].getName))) { extensions =>
+                                                @if(extensions.nonEmpty) {
+                                                    @for(extension <- extensions) {
+                                                        <option value="@plugin.getPluginId@@@plugin.getDescriptor.getVersion@@@extension.getLeft" @if(isExtensionEqual(configuration,plugin,extension.getLeft)){selected}>@extension.getLeft.substring(extension.getLeft.lastIndexOf(".") + 1)</option>
+                                                    }
+                                                } else {
+                                                    <option value="" disabled="disabled">None</option>
+                                                }
+                                            }
+                                            </optgroup>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="panel panel-primary" style="margin-bottom: 10px;">
+                                    <div class="panel-heading">
+                                        Scheduling Information <i>(Delay Time takes precedent over Start Time)</i>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-8">
+                                            <div class="form-group">
+                                                <label for="taskStartTimeHour">Start Time</label>
+                                                <div class="form-inline inline-table-override">
+                                                    <div class="form-group">
+                                                        <div class="input-group" style="max-width: 130px;">
+                                                            <input type="text" class="form-control" id="taskStartTimeHour" placeholder="HH" style="max-width: 50px;" value="@ScheduleUtil.getHourFromStartTime(configuration.schedule)"/>
+                                                            <div class="input-group-addon" style="max-width: 30px;">:</div>
+                                                            <input type="text" class="form-control" id="taskStartTimeMinute" placeholder="MM" style="max-width: 50px;" value="@ScheduleUtil.getMinuteFromStartTime(configuration.schedule)"/>
+                                                        </div>
+                                                        @defining(ScheduleUtil.getAMPMFromStartTime(configuration.schedule)) { amPm =>
+                                                            <select id="taskStartTimeAMPM" class="form-control" style="max-width: 100px ;">
+                                                                <option value="AM" @if(amPm.equals("AM")) {selected}>AM</option>
+                                                            <option value="PM" @if(amPm.equals("PM")) {selected}>PM</option>
+                                                            </select>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="taskDelayTimeVal">Delay Time</label>
+                                                <div class="form-inline inline-table-override">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" id="taskDelayTimeVal" style="max-width: 100px;" placeholder="Time Value" value="@ScheduleUtil.getValFromDelayTime(configuration.schedule)"/>
+                                                        @defining(ScheduleUtil.getUnitsFromDelayTime(configuration.schedule)) { units =>
+                                                            <select class="form-control" id="taskDelayTimeUnits" style="max-width: 120px ;">
+                                                                <option value="seconds" @if(units.equals("seconds")) {selected}>seconds</option>
+                                                            <option value="minutes" @if(units.equals("minutes")) {selected}>minutes</option>
+                                                            <option value="hours" @if(units.equals("hours")) {selected}>hours</option>
+                                                            </select>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="taskIntervalTimeVal">Interval</label>
+                                                <div class="form-inline inline-table-override">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" id="taskIntervalTimeVal" style="max-width: 100px;" placeholder="Time Value" value="@ScheduleUtil.getValFromProcessInterval(configuration.schedule)"/>
+                                                        @defining(ScheduleUtil.getUnitsFromProcessInterval(configuration.schedule)) { units =>
+                                                            <select class="form-control" id="taskIntervalTimeUnits" style="max-width: 120px ;">
+                                                                <option value="seconds" @if(units.equals("seconds")) {selected}>seconds</option>
+                                                            <option value="minutes" @if(units.equals("minutes")) {selected}>minutes</option>
+                                                            <option value="hours" @if(units.equals("hours")) {selected}>hours</option>
+                                                            </select>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4">
+                                            <div class="form-group">
+                                                <label for="taskAutoStart">Auto Start</label>
+                                                <select id="taskAutoStart" class="form-control" style="max-width: 100px;">
+                                                    <option value="true" @if(configuration.schedule.autoStart != null && configuration.schedule.autoStart) {selected}>Yes</option>
+                                                    <option value="false" @if(configuration.schedule.autoStart != null && !configuration.schedule.autoStart) {selected}>No</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <button class="btn btn-primary save pull-right ladda-button" data-style="zoom-in" data-size="l" data-id="@configuration.id">
+                    <span class="ladda-label">Save</span>
+                </button>
+                <button class="btn btn-default cancel pull-right" style="margin-right: 10px;" data-toggle="modal" data-target="#confirm-cancel-pageCancel">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="@routes.Assets.at("javascript/configurations/edit-configuration.js")"></script>
+
+    <script type="text/javascript">
+            $(function() {
+                // auto run
+                edit_configuration.init();
+            });
+    </script>
+}

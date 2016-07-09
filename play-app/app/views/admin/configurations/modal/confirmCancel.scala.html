@@ -1,0 +1,24 @@
+@(id:String, targetLocation:String=null)
+<div class="modal fade confirm-cancel" id="confirm-cancel-@id" aria-hidden="true" aria-labelledby="confirmCancelLabel" role="dialog" tabindex="-1" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+                <!-- MODAL TITLE -->
+            <div class="modal-header" style="background: #444444;">
+                <button title="Close Modal" aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
+                <h4 class="modal-title" style="color: white;">Confirmation</h4>
+            </div>
+
+            <div class="modal-body">
+                Are you sure you wish to cancel?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default action-btn no" type="button" data-dismiss="modal">No</button>
+                @if(targetLocation != null) {
+                    <a href="@targetLocation" class="btn btn-primary action-btn yes" type="button">Yes</a>
+                } else {
+                    <button class="btn btn-primary action-btn yes" onclick="$(this).trigger('confirm-cancel-yes');">Yes</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

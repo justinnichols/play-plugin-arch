@@ -1,0 +1,29 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+GET           /assets/*file                                      controllers.Assets.at(path="/public", file)
+
+GET           /                                                  controllers.admin.Index.index()
+GET           /admin                                             controllers.admin.Dashboard.index()
+GET           /admin/configurations                              controllers.admin.Configurations.index()
+GET           /admin/configurations/add                          controllers.admin.Configurations.add()
+GET           /admin/configurations/edit/:id                     controllers.admin.Configurations.edit(id:String)
+GET           /admin/plugins                                     controllers.admin.Plugins.index()
+
+# API
+
+# Tasks
+GET           /api/tasks                                         controllers.api.Tasks.getTasks
+PUT           /api/tasks/:id                                     controllers.api.Tasks.updateTask(id:String)
+
+# Configurations
+GET           /api/configurations                                controllers.api.Configurations.getConfigurations
+POST          /api/configurations                                controllers.api.Configurations.createConfiguration()
+PUT           /api/configurations/:id                            controllers.api.Configurations.updateConfiguration(id:String)
+DELETE        /api/configurations/:id                            controllers.api.Configurations.deleteConfiguration(id:String)
+
+# Plugins
+GET           /api/plugins                                       controllers.api.Plugins.getPlugins
+POST          /api/plugins                                       controllers.api.Plugins.installPlugin()
+PUT           /api/plugins/:id                                   controllers.api.Plugins.updatePlugin(id:String)
+DELETE        /api/plugins/:id                                   controllers.api.Plugins.deletePlugin(id:String)

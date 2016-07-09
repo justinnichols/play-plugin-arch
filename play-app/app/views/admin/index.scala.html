@@ -1,0 +1,79 @@
+@()(content: Html)
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+
+        <title>Play App Admin</title>
+
+            <!-- Bootstrap Core CSS -->
+        <link href="@routes.Assets.at("bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+
+            <!-- MetisMenu CSS -->
+        <link href="@routes.Assets.at("sb-admin/bower_components/metisMenu/dist/metisMenu.min.css")" rel="stylesheet">
+
+            <!-- Timeline CSS -->
+        <link href="@routes.Assets.at("sb-admin/css/timeline.css")" rel="stylesheet">
+
+            <!-- Custom CSS -->
+        <link href="@routes.Assets.at("sb-admin/css/sb-admin-2.css")" rel="stylesheet">
+
+            <!-- Custom Fonts -->
+        <link href="@routes.Assets.at("sb-admin/bower_components/font-awesome/css/font-awesome.min.css")" rel="stylesheet" type="text/css">
+
+        <!-- Main CSS -->
+        <link href="@routes.Assets.at("stylesheets/main.min.css")" rel="stylesheet">
+
+            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+            <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+
+            <!-- jQuery -->
+        <script src="@routes.Assets.at("javascript/jquery/jquery-2.1.4.min.js")"></script>
+
+        <!-- modernizr -->
+        <script src="@routes.Assets.at("javascript/modernizr/modernizr-custom.js")"></script>
+
+        <!-- select2 -->
+        <link href="@routes.Assets.at("select2/css/select2.min.css")" rel="stylesheet">
+        <script src="@routes.Assets.at("select2/js/select2.full.min.js")"></script>
+
+            <!-- Bootstrap Core JavaScript -->
+        <script src="@routes.Assets.at("bootstrap/js/bootstrap.min.js")"></script>
+
+            <!-- Metis Menu Plugin JavaScript -->
+        <script src="@routes.Assets.at("sb-admin/bower_components/metisMenu/dist/metisMenu.min.js")"></script>
+
+            <!-- Custom Theme JavaScript -->
+        <script src="@routes.Assets.at("sb-admin/js/sb-admin-2.js")"></script>
+
+        <script src="@routes.Assets.at("javascript/jsrender/jsrender.js")"></script>
+
+        <link rel="stylesheet" href="@routes.Assets.at("bootstrap-ladda/ladda-themeless.css")">
+        <script src="@routes.Assets.at("bootstrap-ladda/spin.js")"></script>
+        <script src="@routes.Assets.at("bootstrap-ladda/ladda.js")"></script>
+
+        <script src="@routes.Assets.at("javascript/common.js")"></script>
+        <script src="@routes.Assets.at("javascript/message-controller.js")"></script>
+    </head>
+
+    <body>
+
+        <div id="wrapper">
+            @views.html.admin.nav()
+            @content
+        </div>
+            <!-- /#wrapper -->
+
+    </body>
+
+</html>

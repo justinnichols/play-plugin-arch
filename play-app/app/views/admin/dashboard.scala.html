@@ -1,0 +1,58 @@
+@views.html.admin.index() {
+    <div id="dashboard">
+        <div id="page-wrapper">
+            <div class="row">
+                <div class="col-lg-12">
+                    <h1 class="page-header">Dashboard</h1>
+                </div>
+                    <!-- /.col-lg-12 -->
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            Tasks
+                        </div>
+                        <div class="panel-body">
+                            <div class="table-responsive">
+                                <table class="table table-striped table-condensed">
+                                    <thead>
+                                        <th>Name</th>
+                                        <th>Task ID</th>
+                                        <th>Task Processor</th>
+                                        <th style="text-align: center;">Action</th>
+                                    </thead>
+                                    <tbody id="task-list" >
+                                        <script async id="task-list-item" type="text/x-jsrender">
+                                            <tr>
+                                                <td style="vertical-align: middle;">{{>configuration.name}}</td>
+                                                <td style="vertical-align: middle;">{{>task.id}}</td>
+                                                <td style="vertical-align: middle;">{{>task.processor}}</td>
+                                                <td style="text-align: center; vertical-align: middle;">
+                                                    {{if task.currentStatus == 'STARTED'}}
+                                                        <button class="btn btn-danger stop ladda-button" data-id="{{>task.id}}" data-style="zoom-in" data-size="l"><span class="ladda-label">STOP</span></button>
+                                                    {{else task.currentStatus == 'STOPPED'}}
+                                                        <button class="btn btn-success start ladda-button" data-id="{{>task.id}}" data-style="zoom-in" data-size="l"><span class="ladda-label">START</span></button>
+                                                    {{/if}}
+                                                </td>
+                                            </tr>
+                                        </script>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="@routes.Assets.at("javascript/dashboard/dashboard.js")"></script>
+
+    <script type="text/javascript">
+            $(function() {
+                // auto run
+                dashboard.init();
+            });
+    </script>
+}
